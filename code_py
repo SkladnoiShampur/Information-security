@@ -1,1 +1,36 @@
+# crypto.py
+def generate_gamma(length, seed=123):
+    """Генерация гаммы (псевдослучайной последовательности)"""
+    gamma = []
+    current = seed
+    for _ in range(length):
+        gamma.append(current % 256)  # Значения от 0 до 255
+        current = (current * 1103515245 + 12345) % 2**31
+    return gamma
 
+def encrypt(plaintext, gamma):
+    """Шифрование методом гаммирования"""
+    encrypted = []
+    for i, char in enumerate(plaintext):
+        encrypted.append(ord(char) ^ gamma[i])  # XOR-операция
+    return encrypted
+
+def decrypt(ciphertext, gamma):
+    """Дешифрование методом гаммирования"""
+    decrypted = []
+    for i, cipher_char in enumerate(ciphertext):
+        decrypted.append(chr(cipher_char ^ gamma[i]))
+    return ''.join(decrypted)
+
+# Пример использования
+if __name__ == "__main__":
+    message = "С Новым Годом, друзья!"
+    gamma = generate_gamma(len(message))
+    
+    # Шифрование
+    cipher = encrypt(message, gamma)
+    print("Шифротекст:", cipher)
+    
+    # Дешифрование
+    plain = decrypt(cipher, gamma)
+    print("Открытый текст:", plain)
